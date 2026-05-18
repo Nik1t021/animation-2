@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Солнечная Система</title>
+  <link rel="stylesheet" href="solar-system.css">
+</head>
+<body>
+  <div class="universe">
+    <!-- Stars background -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Solar System -->
+    <div class="solar-system">
+      <!-- Sun -->
+      <div class="sun" onclick="showPlanetInfo('sun')">
+        <div class="sun-glow"></div>
+      </div>
+      
+      <!-- Mercury -->
+      <div class="orbit orbit-mercury">
+        <div class="planet-container planet-mercury" onclick="showPlanetInfo('mercury')">
+          <div class="planet mercury"></div>
+        </div>
+      </div>
+      
+      <!-- Venus -->
+      <div class="orbit orbit-venus">
+        <div class="planet-container planet-venus" onclick="showPlanetInfo('venus')">
+          <div class="planet venus"></div>
+        </div>
+      </div>
+      
+      <!-- Earth -->
+      <div class="orbit orbit-earth">
+        <div class="planet-container planet-earth" onclick="showPlanetInfo('earth')">
+          <div class="planet earth"></div>
+        </div>
+      </div>
+      
+      <!-- Mars -->
+      <div class="orbit orbit-mars">
+        <div class="planet-container planet-mars" onclick="showPlanetInfo('mars')">
+          <div class="planet mars"></div>
+        </div>
+      </div>
+      
+      <!-- Jupiter -->
+      <div class="orbit orbit-jupiter">
+        <div class="planet-container planet-jupiter" onclick="showPlanetInfo('jupiter')">
+          <div class="planet jupiter"></div>
+        </div>
+      </div>
+      
+      <!-- Saturn -->
+      <div class="orbit orbit-saturn">
+        <div class="planet-container planet-saturn" onclick="showPlanetInfo('saturn')">
+          <div class="planet saturn">
+            <div class="saturn-ring"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Uranus -->
+      <div class="orbit orbit-uranus">
+        <div class="planet-container planet-uranus" onclick="showPlanetInfo('uranus')">
+          <div class="planet uranus"></div>
+        </div>
+      </div>
+      
+      <!-- Neptune -->
+      <div class="orbit orbit-neptune">
+        <div class="planet-container planet-neptune" onclick="showPlanetInfo('neptune')">
+          <div class="planet neptune"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Title -->
+    <h1 class="title">Солнечная Система</h1>
+    <p class="subtitle">Нажмите на планету, чтобы узнать о её жителях</p>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-header">
+        <div class="modal-planet-icon" id="modal-icon"></div>
+        <div>
+          <h2 class="modal-title" id="modal-title"></h2>
+          <p class="modal-subtitle" id="modal-subtitle"></p>
+        </div>
+      </div>
+      
+      <div class="modal-content">
+        <div class="info-section">
+          <h3>Жители</h3>
+          <ul class="inhabitants-list" id="inhabitants-list"></ul>
+        </div>
+        
+        <div class="info-section">
+          <h3>Погодные условия</h3>
+          <div class="weather-grid" id="weather-grid"></div>
+        </div>
+        
+        <div class="info-section">
+          <h3>Описание</h3>
+          <p class="description" id="description"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Generate stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.width = Math.random() * 3 + 1 + 'px';
+      star.style.height = star.style.width;
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+
+    // Planet data
+    const planetsData = {
+      sun: {
+        name: 'Солнце',
+        nameEn: 'Sun',
+        color: '#FDB813',
+        inhabitants: [
+          { name: 'Плазменные Духи', description: 'Существа из чистой плазмы, танцующие в солнечных вспышках' },
+          { name: 'Фотонные Странники', description: 'Путешественники, скользящие по лучам света' },
+          { name: 'Ядерные Титаны', description: 'Древние сущности, живущие в ядре звезды' }
+        ],
+        weather: {
+          temperature: '5,500°C (поверхность)',
+          atmosphere: 'Водород и гелий',
+          conditions: 'Постоянные ядерные реакции',
+          special: 'Солнечные вспышки и корональные выбросы'
+        },
+        description: 'Центр нашей солнечной системы. Гигантский шар раскалённой плазмы, дающий жизнь всем планетам.'
+      },
+      mercury: {
+        name: 'Меркурий',
+        nameEn: 'Mercury',
+        color: '#B5B5B5',
+        inhabitants: [
+          { name: 'Теплоходы', description: 'Существа, мигрирующие вслед за терминатором между днём и ночью' },
+          { name: 'Тенелюбы', description: 'Подземные жители глубоких кратеров' },
+          { name: 'Солнечные Бегуны', description: 'Быстрые создания, убегающие от солнечных лучей' }
+        ],
+        weather: {
+          temperature: 'от -180°C до +430°C',
+          atmosphere: 'Практически отсутствует',
+          conditions: 'Экстремальные перепады температур',
+          special: 'Солнечный ветер бомбардирует поверхность'
+        },
+        description: 'Ближайшая к Солнцу планета. Мир контрастов, где день сжигает, а ночь замораживает.'
+      },
+      venus: {
+        name: 'Венера',
+        nameEn: 'Venus',
+        color: '#E6C35C',
+        inhabitants: [
+          { name: 'Облачники', description: 'Парящие существа в верхних слоях атмосферы' },
+          { name: 'Кислотники', description: 'Организмы, питающиеся серной кислотой' },
+          { name: 'Давленцы', description: 'Броненосные создания, выдерживающие огромное давление' }
+        ],
+        weather: {
+          temperature: '+465°C (постоянно)',
+          atmosphere: 'Углекислый газ, серная кислота',
+          conditions: 'Кислотные дожди и ураганы',
+          special: 'Парниковый эффект и сверхвысокое давление'
+        },
+        description: 'Адская близняшка Земли. Самая горячая планета с токсичной атмосферой и вечными грозами.'
+      },
+      earth: {
+        name: 'Земля',
+        nameEn: 'Earth',
+        color: '#6B93D6',
+        inhabitants: [
+          { name: 'Люди', description: 'Разумные существа, создавшие цивилизацию' },
+          { name: 'Дельфины', description: 'Мудрые обитатели океанов' },
+          { name: 'Деревья', description: 'Древние хранители кислорода' },
+          { name: 'Микробиом', description: 'Триллионы невидимых жителей' }
+        ],
+        weather: {
+          temperature: 'от -89°C до +57°C',
+          atmosphere: 'Азот, кислород',
+          conditions: 'Четыре сезона, дожди, снег',
+          special: 'Единственная планета с жидкой водой на поверхности'
+        },
+        description: 'Наш дом. Голубая жемчужина космоса, колыбель жизни в Солнечной системе.'
+      },
+      mars: {
+        name: 'Марс',
+        nameEn: 'Mars',
+        color: '#E27B58',
+        inhabitants: [
+          { name: 'Красные Черви', description: 'Гигантские создания, роющие туннели в породе' },
+          { name: 'Пылевики', description: 'Существа, питающиеся энергией пылевых бурь' },
+          { name: 'Полярные Призраки', description: 'Обитатели ледяных шапок' },
+          { name: 'Ржавые Скитальцы', description: 'Кочевники марсианских пустынь' }
+        ],
+        weather: {
+          temperature: 'от -125°C до +20°C',
+          atmosphere: 'Разреженный углекислый газ',
+          conditions: 'Глобальные пылевые бури',
+          special: 'Пылевые дьяволы и замёрзшие полюса'
+        },
+        description: 'Красная планета. Холодная пустыня с высочайшей горой и глубочайшим каньоном в системе.'
+      },
+      jupiter: {
+        name: 'Юпитер',
+        nameEn: 'Jupiter',
+        color: '#C4A77D',
+        inhabitants: [
+          { name: 'Газовые Левиафаны', description: 'Километровые существа, плавающие в облаках' },
+          { name: 'Штормовые Духи', description: 'Сущности, живущие в Большом Красном Пятне' },
+          { name: 'Молниевые Танцоры', description: 'Создания, питающиеся электричеством' },
+          { name: 'Аммиачные Медузы', description: 'Полупрозрачные обитатели верхних слоёв' }
+        ],
+        weather: {
+          temperature: '-145°C (верхние облака)',
+          atmosphere: 'Водород, гелий, аммиак',
+          conditions: 'Вечные штормы со скоростью 600 км/ч',
+          special: 'Большое Красное Пятно — шторм размером с Землю'
+        },
+        description: 'Король планет. Газовый гигант, защищающий внутренние планеты от астероидов.'
+      },
+      saturn: {
+        name: 'Сатурн',
+        nameEn: 'Saturn',
+        color: '#E4D191',
+        inhabitants: [
+          { name: 'Кольцевые Странники', description: 'Существа, скользящие между частицами колец' },
+          { name: 'Ледяные Скульпторы', description: 'Создания, формирующие кольца' },
+          { name: 'Гексагональные Мудрецы', description: 'Обитатели шестиугольного шторма на полюсе' },
+          { name: 'Титанианцы', description: 'Жители крупнейшего спутника Титан' }
+        ],
+        weather: {
+          temperature: '-178°C',
+          atmosphere: 'Водород, гелий',
+          conditions: 'Ветра до 1800 км/ч',
+          special: 'Уникальный гексагональный шторм на северном полюсе'
+        },
+        description: 'Властелин колец. Величественный гигант с системой колец из миллиардов ледяных частиц.'
+      },
+      uranus: {
+        name: 'Уран',
+        nameEn: 'Uranus',
+        color: '#9FC4E7',
+        inhabitants: [
+          { name: 'Боковые Скользуны', description: 'Существа, адаптированные к боковому вращению' },
+          { name: 'Метановые Призраки', description: 'Полупрозрачные создания в голубых облаках' },
+          { name: 'Ледяные Алмазники', description: 'Обитатели глубин, где идут алмазные дожди' }
+        ],
+        weather: {
+          temperature: '-224°C',
+          atmosphere: 'Водород, гелий, метан',
+          conditions: 'Метановый туман и ледяные облака',
+          special: 'Планета вращается на боку'
+        },
+        description: 'Ледяной гигант, лежащий на боку. Мир вечных сумерек с алмазными дождями в глубинах.'
+      },
+      neptune: {
+        name: 'Нептун',
+        nameEn: 'Neptune',
+        color: '#4A6FE3',
+        inhabitants: [
+          { name: 'Глубинные Титаны', description: 'Древние существа в недрах планеты' },
+          { name: 'Ветровые Гонщики', description: 'Самые быстрые создания в системе' },
+          { name: 'Тритонианцы', description: 'Жители ледяного спутника Тритон' },
+          { name: 'Синие Вихри', description: 'Энергетические сущности в штормах' }
+        ],
+        weather: {
+          temperature: '-214°C',
+          atmosphere: 'Водород, гелий, метан',
+          conditions: 'Сверхзвуковые ветра до 2100 км/ч',
+          special: 'Самые быстрые ветра в Солнечной системе'
+        },
+        description: 'Последний гигант. Самая ветреная планета на краю Солнечной системы.'
+      }
+    };
+
+    function showPlanetInfo(planetId) {
+      const planet = planetsData[planetId];
+      const modal = document.getElementById('modal');
+      
+      document.getElementById('modal-title').textContent = planet.name;
+      document.getElementById('modal-subtitle').textContent = planet.nameEn;
+      document.getElementById('description').textContent = planet.description;
+      
+      // Set planet icon
+      const icon = document.getElementById('modal-icon');
+      icon.style.background = planet.color;
+      if (planetId === 'sun') {
+        icon.style.boxShadow = `0 0 30px ${planet.color}`;
+      } else {
+        icon.style.boxShadow = `0 0 15px ${planet.color}80`;
+      }
+      
+      // Inhabitants
+      const list = document.getElementById('inhabitants-list');
+      list.innerHTML = planet.inhabitants.map(i => `
+        <li class="inhabitant-item">
+          <strong>${i.name}</strong>
+          <span>${i.description}</span>
+        </li>
+      `).join('');
+      
+      // Weather
+      const grid = document.getElementById('weather-grid');
+      grid.innerHTML = `
+        <div class="weather-item">
+          <span class="weather-label">Температура</span>
+          <span class="weather-value">${planet.weather.temperature}</span>
+        </div>
+        <div class="weather-item">
+          <span class="weather-label">Атмосфера</span>
+          <span class="weather-value">${planet.weather.atmosphere}</span>
+        </div>
+        <div class="weather-item">
+          <span class="weather-label">Условия</span>
+          <span class="weather-value">${planet.weather.conditions}</span>
+        </div>
+        <div class="weather-item special">
+          <span class="weather-label">Особенности</span>
+          <span class="weather-value">${planet.weather.special}</span>
+        </div>
+      `;
+      
+      modal.classList.add('active');
+    }
+
+    function closeModal(event) {
+      if (!event || event.target === event.currentTarget) {
+        document.getElementById('modal').classList.remove('active');
+      }
+    }
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
