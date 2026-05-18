@@ -1,0 +1,1 @@
+![Описание](images/image.png)
